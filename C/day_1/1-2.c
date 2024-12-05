@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdint.h>
 
 #include "../advent.h"
 
@@ -33,11 +29,13 @@ int main() {
         i += 1;
     }
 
-    quickSort(left.pointer, 0, left.end);
-    quickSort(right.pointer, 0, right.end);
+    quickSort(left.pointer, 0, left.end-1);
+    quickSort(right.pointer, 0, right.end-1);
+
+    
 
     long total = 0;
-    for (int i = 0; i < right.end; i++) {
+    for (int i = 0; i <= right.end; i++) {
         total += abs(left.pointer[i] - right.pointer[i]);
     }
 

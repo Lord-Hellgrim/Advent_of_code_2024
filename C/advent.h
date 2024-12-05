@@ -1,3 +1,8 @@
+#include <stdio.h>
+#include <unistd.h>
+#include <stdint.h>
+#include <stdlib.h>
+
 void swap(int* a, int* b) {
     int temp = *a;
     *a = *b;
@@ -86,6 +91,12 @@ IntArray new_int_array(size_t cap) {
     return array;
 }
 
+void destroy_int_array(IntArray* array) {
+    free(array->pointer);
+    array->cap = 0;
+    array->end = 0;
+}
+
 size_t int_array_push(int number, IntArray* array) {
     if (array->end > array->cap) {
         return 0;
@@ -103,6 +114,40 @@ void print_int_array(IntArray* array) {
         printf("%d\n", array->pointer[i]);
         i += 1;
     }
+}
+
+int is_same_bytes(void* a, void* b, int size) {
+    char* x = (char*)a;
+    char* y = (char*)b;
+
+    for (int i = 0; i < size; i++) {
+        if (x[i] != y[i]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int binary_search(int needle, int* haystack, int start, int stop) {
+
+    if (needle == haystack[0]) {
+        return 0;
+    } else {
+        stop = stop / 2;
+        while (stop > 0) {
+            if (needle < haystack[stop]) {
+                stop = stop / 2;
+            } else if (needle > haystack[stop]) {
+                stop = stop + stop/2;
+            } else {
+                return stop;
+            }
+        }
+
+    }
+
+    return -1;
+
 }
 
 
