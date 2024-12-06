@@ -147,7 +147,21 @@ int binary_search(int needle, int* haystack, int start, int stop) {
     }
 
     return -1;
+}
 
+int count_instances(int needle, IntArray* haystack, int sorted) {
+    int count = 0;
+
+    int trigger = 0;
+    for (int i = 0; i < haystack->end; i++) {
+        if (haystack->pointer[i] == needle) {
+            trigger = 1;
+            count++;
+        } else if (trigger && sorted) {
+            break;
+        }
+    }
+    return count;
 }
 
 

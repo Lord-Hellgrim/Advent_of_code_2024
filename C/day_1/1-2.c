@@ -32,7 +32,12 @@ int main() {
     quickSort(left.pointer, 0, left.end-1);
     quickSort(right.pointer, 0, right.end-1);
 
-    
+    IntArray simlist = new_int_array(left.cap);
+
+
+    for (int i = 0; i < left.end; i++) {
+        
+    }
 
     long total = 0;
     for (int i = 0; i <= right.end; i++) {

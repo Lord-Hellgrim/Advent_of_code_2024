@@ -1,5 +1,15 @@
 #include "advent.h"
 
+IntArray make_test_array(int cap) {
+    IntArray test_array = new_int_array(cap);
+
+    for (int i = 0; i < cap; i++) {
+        int_array_push(i, &test_array);
+    }
+
+    return test_array;
+}
+
 int test_abs() {
     int j = 1000;
     for (int i = -1000; i < 0; i++) {
@@ -57,28 +67,38 @@ int test_binary_search() {
     }
 
     return 1;
-
-    
 }
+
+int test_count_instances() {
+    IntArray test_array = make_test_array(100);
+
+    int count = count_instances(2, &test_array, 0);
+
+    printf("count: %d", count);
+
+    if (count != 1) {
+        return -1
+    }
+
+    return 1;
+}
+
+#define RUN_TEST(test_func)                                                         \
+    do {                                                                            \
+        printf("\x1b[1;33mRunning test: %s...\x1b[1;0m", #test_func);               \
+        if (test_func()) {                                                          \
+            printf("\x1b[1;32mTest %s passed.\x1b[1;0m\n", #test_func);             \
+        } else {                                                                    \
+            printf("\x1b[1;31mTest %s failed.\x1b[1;0m\n", #test_func);             \
+        }                                                                           \
+    } while (0)                                                  
 
 int main() {
 
-    if (test_abs() != -1) {
-        printf("Test_abs passed!\n");
-    }
-
-    if (test_int_array() != -1) {
-        printf("Test_int_array passed!\n");
-    }
-
-    if (test_quicksort() != -1) {
-        printf("Test_quicksort passed!\n");
-    }
-
-    if (test_binary_search() != -1) {
-        printf("Test_binary_search passed!\n");
-    }
-
-    printf("All tests passed!\n");
-
+    RUN_TEST(test_abs);
+    RUN_TEST(test_int_array);
+    RUN_TEST(test_quicksort);
+    RUN_TEST(test_binary_search);
+    RUN_TEST(test_count_instances);
+    
 }
