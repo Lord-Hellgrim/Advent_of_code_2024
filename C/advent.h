@@ -55,27 +55,12 @@ typedef struct {
     size_t len;
 } String;
 
+typedef struct {
+    char* pointer;
+    size_t cap;
+    size_t len;
+} AutoString;
 
-String get_puzzle_input_string(char* file_name) {
-    FILE* puzzle_input_file = fopen(file_name, "r");
-
-    if (puzzle_input_file == NULL) {
-        String err = {NULL, 0};
-        return err;
-    }
-
-    fseek(puzzle_input_file, 0, SEEK_END);
-    long size = ftell(puzzle_input_file);
-    fseek(puzzle_input_file, 0, 0);
-
-    char* puzzle_input = malloc(size*2);
-
-    size_t bytes_read = fread(puzzle_input, 1, size, puzzle_input_file);
-
-    String ret = {puzzle_input, bytes_read};
-
-    return ret;
-}
 
 
 
@@ -86,9 +71,16 @@ typedef struct {
 } IntArray;
 
 IntArray new_int_array(size_t cap) {
-    int* pointer = malloc(cap);
+    int* pointer = malloc(cap * sizeof(int));
     IntArray array = {pointer, cap, 0};
     return array;
+}
+
+void int_array_clear(IntArray* array) {
+    size_t i = 0;
+    while (i < array->end) {
+        array->pointer[i] = 0;
+    }
 }
 
 void destroy_int_array(IntArray* array) {
@@ -183,4 +175,136 @@ int abs(int input) {
     } else {
         return input;
     }
+}
+
+typedef struct {
+    int value;
+    char occupied;
+} MapSlot;
+
+typedef struct {
+    MapSlot* slots;
+    size_t cap;
+} HashMap;
+
+uint64_t fnv_hash(const char *str) {
+    uint64_t hash = 1099511628211;
+    while (*str) {
+        hash ^= *(uint8_t *)str++;
+        hash *= 0x1B;
+    }
+    return hash;
+}
+
+int hashmap_insert(int key, int value, HashMap* map) {
+    return 1;
+}
+
+typedef unsigned char byte;
+
+typedef struct {
+    byte* buffer;
+    size_t cap;
+    size_t current;
+} Arena;
+
+Arena arena_create(size_t cap) {
+    byte* buffer = malloc(cap);
+    Arena arena;
+
+    arena.buffer = buffer;
+    arena.cap = cap;
+    arena.current = 0;
+
+    return arena;
+}
+
+int arena_free_all(Arena* arena) {
+    free(arena->buffer);
+    return 1;
+}
+
+void arena_reset(Arena* arena) {
+    arena->current = 0;
+}
+
+void* arena_alloc(size_t number_of_items, size_t size_of_items, char alignment, Arena* arena) {
+    if (arena->current + size_of_items*number_of_items > arena->cap) {
+        printf("current: %ld, incoming: %ld\n", arena->current, size_of_items*number_of_items);
+        arena->buffer = realloc(arena->buffer, arena->cap  + size_of_items*number_of_items*2);
+        arena->cap += size_of_items*number_of_items*2;
+    }
+    if (arena->current % alignment != 0) {
+        arena->current += alignment - (arena->current % alignment);
+    }
+    printf("Cap: %ld\n", arena->cap);
+
+
+    void* ret = arena->buffer + arena->current;
+
+    arena->current += size_of_items * number_of_items;
+
+    return ret;
+}
+
+String get_puzzle_input_string(char* file_name, Arena* arena) {
+    FILE* puzzle_input_file = fopen(file_name, "r");
+
+    if (puzzle_input_file == NULL) {
+        String err = {NULL, 0};
+        return err;
+    }
+
+    fseek(puzzle_input_file, 0, SEEK_END);
+    long size = ftell(puzzle_input_file);
+    fseek(puzzle_input_file, 0, 0);
+
+    char* puzzle_input = arena_alloc(size*2, 1, 1, arena);
+
+    size_t bytes_read = fread(puzzle_input, 1, size, puzzle_input_file);
+    printf("HERE!\n");
+
+    String ret = {puzzle_input, bytes_read};
+
+    return ret;
+}
+
+AutoString auto_string_new(int cap) {
+    char* pointer = malloc(cap);
+
+    size_t len = 0;
+    AutoString result = {pointer, cap, len};
+
+    return result;
+}
+
+void auto_string_push(char character, AutoString* string) {
+
+    if (string->cap == string->len) {
+        string->pointer = realloc(string->pointer, string->cap*2);
+    }
+
+    string->pointer[string->len] = character;
+
+    string->pointer++;
+
+    string->cap++;
+
+}
+
+void auto_string_clear(AutoString* string) {
+    string->pointer = string->pointer - string->len;
+}
+
+int int_from_string(char* string, size_t len) {
+    char* temp = string;
+    int p = len;
+    int result = 0;
+
+    int i = 0;
+    while (temp[i] != 0) {
+        result += (temp[i] - 0x30) + power(10, len);
+    }
+
+    return result;
 }

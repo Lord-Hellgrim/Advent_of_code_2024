@@ -1,6 +1,6 @@
 #include "advent.h"
 
-IntArray make_test_array(int cap) {
+IntArray make_test_array(size_t cap) {
     IntArray test_array = new_int_array(cap);
 
     for (int i = 0; i < cap; i++) {
@@ -70,17 +70,54 @@ int test_binary_search() {
 }
 
 int test_count_instances() {
-    IntArray test_array = make_test_array(100);
+    IntArray test_array = new_int_array(100);
+    
+    int_array_push(1, &test_array);
+    int_array_push(2, &test_array);
+    int_array_push(2, &test_array);
+    int_array_push(3, &test_array);
+    int_array_push(3, &test_array);
+    int_array_push(3, &test_array);
+    int_array_push(4, &test_array);
+    int_array_push(4, &test_array);
+    int_array_push(4, &test_array);
+    int_array_push(4, &test_array);
+    int_array_push(5, &test_array);
+    int_array_push(5, &test_array);
 
-    int count = count_instances(2, &test_array, 0);
+    int count1 = count_instances(2, &test_array, 0);
+    int count2 = count_instances(2, &test_array, 0);
+    int count3 = count_instances(2, &test_array, 0);
+    int count4 = count_instances(2, &test_array, 0);
+    int count5 = count_instances(2, &test_array, 0);
 
-    printf("count: %d", count);
-
-    if (count != 1) {
-        return -1
-    }
+    if (count1 != 1) { return -1; }
+    if (count2 != 2) { return -1; }
+    if (count3 != 3) { return -1; }
+    if (count4 != 4) { return -1; }
+    if (count5 != 2) { return -1; }
 
     return 1;
+}
+
+int test_arena() {
+
+    Arena arena = arena_create(100);
+
+    int* pointer = arena_alloc(10, 4, 4, &arena);
+
+    for (int i = 0; i < 10; i++) {
+        int* temp = pointer + i;
+        *temp = i;
+    }
+
+    int j = 0;
+    while (j < 10) {
+        printf("pointer[%d]: %d\n", j, pointer[j]);
+        j++;
+    }
+
+    return 1;   
 }
 
 #define RUN_TEST(test_func)                                                         \
@@ -100,5 +137,5 @@ int main() {
     RUN_TEST(test_quicksort);
     RUN_TEST(test_binary_search);
     RUN_TEST(test_count_instances);
-    
+    RUN_TEST(test_arena);
 }

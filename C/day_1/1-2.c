@@ -29,21 +29,24 @@ int main() {
         i += 1;
     }
 
-    quickSort(left.pointer, 0, left.end-1);
-    quickSort(right.pointer, 0, right.end-1);
+    // quickSort(left.pointer, 0, left.end-1);
+    // quickSort(right.pointer, 0, right.end-1);
 
     IntArray simlist = new_int_array(left.cap);
 
+    for (int l = 0; l < left.end; l++) {
+        int temp = count_instances(left.pointer[l], &right, 0);
+        int_array_push(temp, &simlist);
+        printf("%d: %d\n", left.pointer[l], temp);
 
+    }
+
+    size_t similarity = 0;
     for (int i = 0; i < left.end; i++) {
-        
+        similarity += left.pointer[i] * simlist.pointer[i];
     }
 
-    long total = 0;
-    for (int i = 0; i <= right.end; i++) {
-        total += abs(left.pointer[i] - right.pointer[i]);
-    }
+    printf("score: %ld\n", similarity);
 
-    printf("%ld\n", total);
 
 }
